@@ -19,7 +19,12 @@ async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env").expect("cannot load env from a file");
   }
 
-let store = web::Data::new(Store::new().await);
+  // Initialize the logger to use environment variables.
+  // In this case, a good default is setting the environment variable
+  // `RUST_LOG` to `debug`.
+  tracing_subscriber::fmt::init();
+
+  let store = web::Data::new(Store::new().await);
   let port = store.config.port;
   let cors_origin = store.config.cors_origin.clone();
 

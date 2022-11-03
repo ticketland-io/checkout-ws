@@ -19,12 +19,24 @@ pub struct Disconnect {
 }
 
 
-pub struct CheckoutManager {}
+pub struct CheckoutManager {
+  sessions: HashMap<Uuid, Socket>,
+}
 
 impl CheckoutManager {
-  pub fn new(store: Arc<Store>) -> Self {
-    Self {}
+  pub fn new() -> Self {
+    Self {
+      sessions: HashMap::new(),
+    }
   }
+
+  fn send_message(&self, message: &str, id_to: &Uuid) {
+    if let Some(socket_recipient) = self.sessions.get(id_to) {
+      let _ = socket_recipient.do_send(WsMessage(message.to_owned()));
+    } else {
+      println!("attempting to send message but couldn't find user id.");
+    }
+}
 }
 
 impl Actor for CheckoutManager {
