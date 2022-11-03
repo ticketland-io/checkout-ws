@@ -12,6 +12,7 @@ actix-rt = "2.2"
 actix-web = "4.0.1"
 actix-cors = "0.6.1"
 actix-web-actors = "4.1.0"
+eyre = "0.6.8"
 ticketland-core = { git = "https://github.com/ticketland-io/common-rust" }
 api-helpers = { git = "https://github.com/ticketland-io/common-rust" }
 common-data = { git = "https://github.com/ticketland-io/common-rust" }

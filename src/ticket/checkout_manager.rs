@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use eyre::Result;
 use std::collections::{HashMap, HashSet};
 use actix::prelude::*;
 use tracing::{info, error};
@@ -10,17 +11,14 @@ use crate::error;
 #[rtype(result = "()")]
 pub struct Connect {
   pub addr: Recipient<CheckoutMsg>,
-  pub lobby_id: Uuid,
-  pub self_id: Uuid,
+  pub session_id: Uuid,
 }
 
 #[derive(Message)]
 #[rtype(result = "()")]
 pub struct Disconnect {
-  pub room_id: Uuid,
-  pub id: Uuid,
+  pub session_id: Uuid,
 }
-
 
 pub struct CheckoutManager {
   sessions: HashMap<Uuid, Socket>,
@@ -33,13 +31,12 @@ impl CheckoutManager {
     }
   }
 
-  fn send_checout_link(&self, checkout_link: String, session_id: &Uuid) {
-    if let Some(socket_recipient) = self.sessions.get(session_id) {
-      let _ = socket_recipient.do_send(CheckoutMsg(checkout_link));
-    } else {
-      error!("attempting to send message but couldn't find user id.");
-    }
-}
+  fn send_message(&self, msg: String, session_id: &Uuid) -> Result<()> {
+    let socket = self.sessions.get(session_id).context("session id does not exist")?;
+    socket.do_send(CheckoutMsg(msg));
+
+    Ok(())
+  }
 }
 
 impl Actor for CheckoutManager {
@@ -47,13 +44,14 @@ impl Actor for CheckoutManager {
 }
 
 impl Handler<Connect> for CheckoutManager {
-  type Result = ResponseActFuture<Self, ()>;
+  type Result = ();
   
   fn handle(&mut self, msg: Connect, ctx: &mut Self::Context) -> Self::Result {
-    let fut = async move {
-    }
-    .into_actor(self);
-    
-    Box::pin(fut)
+    self.sessions.insert(
+      msg.session_id,
+      msg.addr,
+    );
+
+    self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
   }
 }
