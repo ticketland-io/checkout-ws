@@ -1,12 +1,15 @@
 use std::sync::Arc;
 use std::collections::{HashMap, HashSet};
 use actix::prelude::*;
+use tracing::{info, error};
 use uuid::Uuid;
+
+use crate::error;
 
 #[derive(Message)]
 #[rtype(result = "()")]
 pub struct Connect {
-  pub addr: Recipient<WsMessage>,
+  pub addr: Recipient<CheckoutMsg>,
   pub lobby_id: Uuid,
   pub self_id: Uuid,
 }
@@ -30,11 +33,11 @@ impl CheckoutManager {
     }
   }
 
-  fn send_message(&self, message: &str, id_to: &Uuid) {
-    if let Some(socket_recipient) = self.sessions.get(id_to) {
-      let _ = socket_recipient.do_send(WsMessage(message.to_owned()));
+  fn send_checout_link(&self, checkout_link: String, session_id: &Uuid) {
+    if let Some(socket_recipient) = self.sessions.get(session_id) {
+      let _ = socket_recipient.do_send(CheckoutMsg(checkout_link));
     } else {
-      println!("attempting to send message but couldn't find user id.");
+      error!("attempting to send message but couldn't find user id.");
     }
 }
 }
