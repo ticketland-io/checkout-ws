@@ -2,9 +2,7 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct WsMessage {
-  pub method: WsMethod
-}
+pub struct WsMessage {}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -26,9 +24,7 @@ pub enum Status {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum WsResponseMsg {
-  VerifyTicketResponse,
-}
+pub enum WsResponseMsg {}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]

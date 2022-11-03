@@ -1,10 +1,15 @@
+use std::{
+  sync::Arc,
+  env, panic, process
+};
 use actix_cors::Cors;
 use actix_web::{middleware, web, http, App, HttpResponse, HttpServer};
+use actix::prelude::*;
 use env_logger::Env;
-use std::{env, panic, process};
 use ticketland_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
+  ticket::checkout_manager::CheckoutManager,
 };
 
 #[actix_web::main]
@@ -19,12 +24,9 @@ async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env").expect("cannot load env from a file");
   }
 
-  // Initialize the logger to use environment variables.
-  // In this case, a good default is setting the environment variable
-  // `RUST_LOG` to `debug`.
-  tracing_subscriber::fmt::init();
-
   let store = web::Data::new(Store::new().await);
+  let checkout_manager = CheckoutManager::new(Arc::clone(&store)).start();
+
   let port = store.config.port;
   let cors_origin = store.config.cors_origin.clone();
 
@@ -40,6 +42,7 @@ async fn main() -> std::io::Result<()> {
 
     App::new()
       .app_data(store.clone())
+      .app_data(checkout_manager.clone()) 
       .wrap(cors)
       .wrap(middleware::Logger::default())
       .service(web::resource("/ws/").route(web::get().to(ws_index)))

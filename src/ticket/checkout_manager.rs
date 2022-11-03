@@ -1,11 +1,16 @@
-use std::sync::Arc;
-use eyre::Result;
-use std::collections::{HashMap, HashSet};
+use std::{
+  collections::HashMap,
+  sync::Arc,
+};
 use actix::prelude::*;
-use tracing::{info, error};
+use eyre::{Result, ContextCompat};
 use uuid::Uuid;
+use crate::{
+  utils::store::Store,
+  ws::ws_actor::CheckoutMsg,
+};
 
-use crate::error;
+type Socket = Recipient<CheckoutMsg>;
 
 #[derive(Message)]
 #[rtype(result = "()")]
@@ -21,12 +26,14 @@ pub struct Disconnect {
 }
 
 pub struct CheckoutManager {
+  _store: Arc<Store>,
   sessions: HashMap<Uuid, Socket>,
 }
 
 impl CheckoutManager {
-  pub fn new() -> Self {
+  pub fn new(_store: Arc<Store>) -> Self {
     Self {
+      _store,
       sessions: HashMap::new(),
     }
   }
@@ -46,23 +53,22 @@ impl Actor for CheckoutManager {
 impl Handler<Connect> for CheckoutManager {
   type Result = ();
   
-  fn handle(&mut self, msg: Connect, ctx: &mut Self::Context) -> Self::Result {
+  fn handle(&mut self, msg: Connect, _: &mut Self::Context) -> Self::Result {
     self.sessions.insert(
       msg.session_id,
       msg.addr,
     );
 
-    self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
+    let _ = self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
   }
 }
-
 
 impl Handler<Disconnect> for CheckoutManager {
   type Result = ();
   
-  fn handle(&mut self, msg: Disconnect, ctx: &mut Self::Context) -> Self::Result {
+  fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) -> Self::Result {
     self.sessions.remove(&msg.session_id);
 
-    self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
+    let _ = self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
   }
 }
