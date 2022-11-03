@@ -1,1 +1,1 @@
-pub mod verify_ticket;
+pub mod checkout_manager;

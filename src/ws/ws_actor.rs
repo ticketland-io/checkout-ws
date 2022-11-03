@@ -9,7 +9,6 @@ use uuid::Uuid;
 use ticketland_utils::logger::console_logger::{LOGGER};
 use crate::{
   utils::store::Store,
-  ticket::verify_ticket::{VerifyTicket, VerifyTicketActor},
 };
 use super::{
   types::{
@@ -126,19 +125,6 @@ impl Handler<Spawn> for WsActor {
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::VerifyTicket {event_id, ticket_nft, sig, access_token} => {
-          if let Ok(user) = store.auth_guard.authenticate(access_token).await {
-            let verify_ticket_actor = VerifyTicketActor::new(Arc::clone(&store)).start();
-          
-            if let Ok(result) = verify_ticket_actor.send(VerifyTicket(msg.0)).await {
-              return result
-            } else {
-              return unauthorized()
-            } 
-          } else {
-            return internal_server_error()
-          }
-        },
         _ => {
           return WsResponse {
             status: Status::Err("Method not supported".to_string()),
