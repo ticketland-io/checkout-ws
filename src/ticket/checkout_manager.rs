@@ -55,3 +55,14 @@ impl Handler<Connect> for CheckoutManager {
     self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
   }
 }
+
+
+impl Handler<Disconnect> for CheckoutManager {
+  type Result = ();
+  
+  fn handle(&mut self, msg: Disconnect, ctx: &mut Self::Context) -> Self::Result {
+    self.sessions.remove(&msg.session_id);
+
+    self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
+  }
+}
