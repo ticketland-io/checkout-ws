@@ -9,7 +9,7 @@ use env_logger::Env;
 use ticketland_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
-  ticket::checkout_manager::CheckoutManager,
+  checkout::checkout_manager::CheckoutManager,
 };
 
 #[actix_web::main]

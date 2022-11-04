@@ -4,7 +4,7 @@ use actix::prelude::*;
 use super::ws_actor::WsActor;
 use crate::{
   utils::store::Store,
-  ticket::checkout_manager::CheckoutManager
+  checkout::checkout_manager::CheckoutManager
 };
 
 /// do websocket handshake and start `MyWebSocket` actor

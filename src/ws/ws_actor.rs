@@ -8,7 +8,7 @@ use uuid::Uuid;
 use ticketland_utils::logger::console_logger::{LOGGER};
 use crate::{
   utils::store::Store,
-  ticket::checkout_manager::{
+  checkout::checkout_manager::{
     CheckoutManager,
     Connect,
     Disconnect,
