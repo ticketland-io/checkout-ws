@@ -19,6 +19,9 @@ pub enum WsMethod {
     seat_name: String,
     access_token: String,
   },
+  CheckoutSessionCreated {
+    session_id: String,
+  }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -31,7 +34,8 @@ pub enum Status {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WsResponseMsg {
-  CheckoutLinkInProgress
+  CheckoutSessionInProgress,
+  CheckoutSessionCreated,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

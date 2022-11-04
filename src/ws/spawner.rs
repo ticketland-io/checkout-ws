@@ -7,11 +7,11 @@ use super::{
     WsMessage,
     WsMethod,
     WsResponse,
+    WsResponseMsg,
     Status,
   },
   response::{
     unauthorized,
-    internal_server_error,
   },
 };
 
@@ -23,12 +23,19 @@ impl Handler<Spawn> for WsActor {
   type Result = ResponseActFuture<Self, ()>;
 
   fn handle(&mut self, msg: Spawn, _: &mut Self::Context) -> Self::Result  {
-    let _store = Arc::clone(&self.store);
+    let store = Arc::clone(&self.store);
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::CreateCheckoutLink {..} => {
-          return unauthorized()
+        WsMethod::CreateCheckoutLink {access_token, ..} => {
+          if let Ok(_) = store.auth_guard.authenticate(access_token).await {
+            WsResponse {
+              status: Status::Ok,
+              result: Some(WsResponseMsg::CheckoutSessionInProgress),
+            }
+          } else {
+            unauthorized()
+          }
         },
         _ => {
           return WsResponse {
