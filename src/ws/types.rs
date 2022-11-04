@@ -35,8 +35,10 @@ pub enum Status {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WsResponseMsg {
+  Connect,
+  Disconnect,
   CheckoutSessionInProgress,
-  CheckoutSessionCreated,
+  CheckoutSessionCreated(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

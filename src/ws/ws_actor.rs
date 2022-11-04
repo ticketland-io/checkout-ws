@@ -15,7 +15,7 @@ use crate::{
   },
 };
 use super::{
-  types::WsMessage,
+  types::{WsMessage, WsResponse},
   spawner::Spawn,
 };
 
@@ -131,12 +131,12 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsActor {
 
 #[derive(Message)]
 #[rtype(result = "()")]
-pub struct CheckoutMsg(pub String);
+pub struct CheckoutMsg(pub WsResponse);
 
 impl Handler<CheckoutMsg> for WsActor {
   type Result = ();
 
   fn handle(&mut self, msg: CheckoutMsg, ctx: &mut Self::Context) {
-    ctx.text(msg.0);
+    ctx.text(serde_json::to_string(&msg.0).unwrap());
   }
 }

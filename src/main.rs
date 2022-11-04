@@ -24,9 +24,10 @@ async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env").expect("cannot load env from a file");
   }
 
+  tracing_subscriber::fmt::init();
+  
   let store = web::Data::new(Store::new().await);
   let checkout_manager = CheckoutManager::new(Arc::clone(&store)).start();
-
   let port = store.config.port;
   let cors_origin = store.config.cors_origin.clone();
 

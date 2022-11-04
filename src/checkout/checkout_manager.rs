@@ -7,7 +7,10 @@ use eyre::{Result, ContextCompat};
 use uuid::Uuid;
 use crate::{
   utils::store::Store,
-  ws::ws_actor::CheckoutMsg,
+  ws::{
+    ws_actor::CheckoutMsg,
+    types::{WsResponse, Status, WsResponseMsg},
+  },
 };
 
 type Socket = Recipient<CheckoutMsg>;
@@ -38,7 +41,7 @@ impl CheckoutManager {
     }
   }
 
-  fn send_message(&self, msg: String, session_id: &Uuid) -> Result<()> {
+  pub fn send_message(&self, msg: WsResponse, session_id: &Uuid) -> Result<()> {
     let socket = self.sessions.get(session_id).context("session id does not exist")?;
     socket.do_send(CheckoutMsg(msg));
 
@@ -59,7 +62,10 @@ impl Handler<Connect> for CheckoutManager {
       msg.addr,
     );
 
-    let _ = self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
+    let _ = self.send_message(WsResponse {
+      status: Status::Ok,
+      result: Some(WsResponseMsg::Connect),
+    }, &msg.session_id);
   }
 }
 
@@ -69,6 +75,9 @@ impl Handler<Disconnect> for CheckoutManager {
   fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) -> Self::Result {
     self.sessions.remove(&msg.session_id);
 
-    let _ = self.send_message(format!("New session id {}", msg.session_id), &msg.session_id);
+    let _ = self.send_message(WsResponse {
+      status: Status::Ok,
+      result: Some(WsResponseMsg::Disconnect),
+    }, &msg.session_id);
   }
 }
