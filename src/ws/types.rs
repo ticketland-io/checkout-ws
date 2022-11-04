@@ -9,7 +9,7 @@ pub struct WsMessage {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WsMethod {
-  CreateCheckoutLink {
+  CreateCheckoutSession {
     buyer_uid: String,
     event_id: String,
     sale_account: String,

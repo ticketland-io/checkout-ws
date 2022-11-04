@@ -1,6 +1,5 @@
 use std::sync::Arc;
 use actix::prelude::*;
-use eyre::Result;
 use super::{
   ws_actor::WsActor,
   types::{
@@ -19,12 +18,6 @@ use super::{
 #[rtype(result = "()")]
 pub struct Spawn(pub WsMessage);
 
-impl WsActor {
-  fn authorize_middleware() -> Result<()> {
-    todo!()
-  }
-}
-
 impl Handler<Spawn> for WsActor {
   type Result = ResponseActFuture<Self, ()>;
 
@@ -33,7 +26,7 @@ impl Handler<Spawn> for WsActor {
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::CreateCheckoutLink {access_token, ..} => {
+        WsMethod::CreateCheckoutSession {access_token, ..} => {
           if let Ok(_) = store.auth_guard.authenticate(access_token).await {
             WsResponse {
               status: Status::Ok,
