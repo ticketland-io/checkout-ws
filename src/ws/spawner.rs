@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use actix::prelude::*;
-
+use eyre::Result;
 use super::{
   ws_actor::WsActor,
   types::{
@@ -18,6 +18,12 @@ use super::{
 #[derive(Message)]
 #[rtype(result = "()")]
 pub struct Spawn(pub WsMessage);
+
+impl WsActor {
+  fn authorize_middleware() -> Result<()> {
+    todo!()
+  }
+}
 
 impl Handler<Spawn> for WsActor {
   type Result = ResponseActFuture<Self, ()>;
