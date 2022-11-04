@@ -37,7 +37,7 @@ pub struct WsActor {
   /// otherwise we drop connection.
   hb: Instant,
   checkout_manager: Addr<CheckoutManager>,
-  subscription_id: Uuid,
+  pub ws_session_id: Uuid,
 }
 
 impl WsActor {
@@ -46,7 +46,7 @@ impl WsActor {
       store,
       hb: Instant::now(),
       checkout_manager,
-      subscription_id: unique_id(),
+      ws_session_id: unique_id(),
     }
   }
 
@@ -74,7 +74,7 @@ impl Actor for WsActor {
     // connect to the checkout manager
     self.checkout_manager.send(Connect {
       addr: ctx.address().recipient(),
-      session_id: self.subscription_id,
+      session_id: self.ws_session_id,
     })
     .into_actor(self)
     .then(|res, _, ctx| {
@@ -91,7 +91,7 @@ impl Actor for WsActor {
     LOGGER.info("stopped ws connection");
 
     self.checkout_manager.do_send(Disconnect {
-      session_id: self.subscription_id,
+      session_id: self.ws_session_id,
     });
   }
 }

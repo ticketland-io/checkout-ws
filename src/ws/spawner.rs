@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use actix::prelude::*;
+use fiat_checkout_manager::models::create_checkout::CreateCheckout;
 use super::{
   ws_actor::WsActor,
   types::{
@@ -23,11 +24,41 @@ impl Handler<Spawn> for WsActor {
 
   fn handle(&mut self, msg: Spawn, _: &mut Self::Context) -> Self::Result  {
     let store = Arc::clone(&self.store);
+    let ws_session_id = self.ws_session_id.to_string();
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::CreateCheckoutSession {access_token, ..} => {
+        WsMethod::CreateCheckoutSession {
+          access_token,
+          buyer_uid,
+          sale_account,
+          event_id,
+          ticket_nft,
+          ticket_type_index,
+          recipient,
+          seat_index,
+          seat_name,
+        } => {
           if let Ok(_) = store.auth_guard.authenticate(access_token).await {
+            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout {
+              ws_session_id,
+              buyer_uid: buyer_uid.clone(),
+              sale_account: sale_account.clone(),
+              event_id: event_id.clone(),
+              ticket_nft: ticket_nft.clone(),
+              ticket_type_index: ticket_type_index.clone(),
+              recipient: recipient.clone(),
+              seat_index: seat_index.clone(),
+              seat_name: seat_name.clone(),
+            }).await;
+            
+            if let Err(error) = result {
+              return  WsResponse {
+                status: Status::Err(error.to_string()),
+                result: None,
+              }
+            }
+
             WsResponse {
               status: Status::Ok,
               result: Some(WsResponseMsg::CheckoutSessionInProgress),
