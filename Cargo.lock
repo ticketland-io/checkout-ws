@@ -1555,8 +1555,8 @@ checksum = "835a3dc7d1ec9e75e2b5fb4ba75396837112d2060b03f7d43bc1897c7f7211da"
 
 [[package]]
 name = "fiat-checkout-manager"
-version = "0.1.0"
-source = "git+https://github.com/ticketland-io/fiat-checkout-manager#bcf8399c9c42e5302be725634bc83cf0ca66c951"
+version = "0.1.1"
+source = "git+https://github.com/ticketland-io/fiat-checkout-manager#dd3c3acc421aaae02463e1ec17812948da3ed471"
 dependencies = [
  "actix",
  "actix-rt",
