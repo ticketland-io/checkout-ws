@@ -16,6 +16,7 @@ use crate::{
 };
 use super::{
   types::WsMessage,
+  spawner::Spawn,
 };
 
 /// How often heartbeat pings are sent
@@ -31,7 +32,7 @@ fn unique_id() -> Uuid {
 /// websocket connection is long running connection, it easier
 /// to handle with an actor
 pub struct WsActor {
-  _store: web::Data<Store>,
+  pub store: web::Data<Store>,
   /// Client must send ping at least once per CLIENT_TIMEOUT,
   /// otherwise we drop connection.
   hb: Instant,
@@ -40,9 +41,9 @@ pub struct WsActor {
 }
 
 impl WsActor {
-  pub fn new(_store: web::Data<Store>, checkout_manager: Addr<CheckoutManager>) -> Self {
+  pub fn new(store: web::Data<Store>, checkout_manager: Addr<CheckoutManager>) -> Self {
     Self {
-      _store,
+      store,
       hb: Instant::now(),
       checkout_manager,
       subscription_id: unique_id(),
@@ -107,7 +108,9 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsActor {
       },
       Ok(ws::Message::Text(text)) => {
         if let Ok(_) = serde_json::from_slice::<WsMessage>(text.as_bytes()) {
-          
+          if let Ok(msg) = serde_json::from_slice::<WsMessage>(text.as_bytes()) {
+            ctx.notify(Spawn(msg));
+          }  
         }
       },
       Ok(ws::Message::Binary(bin)) => ctx.binary(bin),

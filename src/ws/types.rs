@@ -2,15 +2,21 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct WsMessage {}
+pub struct WsMessage {
+  pub method: WsMethod
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WsMethod {
-  VerifyTicket {
+  CreateCheckoutLink {
+    buyer_uid: String,
     event_id: String,
+    sale_account: String,
     ticket_nft: String,
-    sig: String,
+    recipient: String,
+    seat_index: String,
+    seat_name: String,
     access_token: String,
   },
 }
@@ -24,7 +30,9 @@ pub enum Status {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum WsResponseMsg {}
+pub enum WsResponseMsg {
+  CheckoutLinkInProgress
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
