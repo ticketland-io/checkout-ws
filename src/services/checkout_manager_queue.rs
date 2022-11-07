@@ -14,9 +14,9 @@ impl CheckoutManagerQueue {
   ) -> Self {
     let checkout_manager_producer = RetryProducer::new(
       &rabbitmq_uri,
-      &"checkout_session",
-      &"checkout_session",
-      &"checkout_session.new",
+      &"create_checkout_session",
+      &"create_checkout_session",
+      &"create_checkout_session.new",
       retry_ttl,
     ).await.unwrap();
 
@@ -27,8 +27,8 @@ impl CheckoutManagerQueue {
 
   pub async fn new_checkout_session(&self, msg: CreateCheckout) -> Result<()> {
     self.checkout_manager_producer.publish(
-      &"checkout_session",
-      &"checkout_session.new",
+      &"create_checkout_session",
+      &"create_checkout_session.new",
       &msg.try_to_vec().unwrap()
     ).await
   }
