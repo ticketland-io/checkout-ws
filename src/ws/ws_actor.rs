@@ -8,8 +8,8 @@ use uuid::Uuid;
 use ticketland_utils::logger::console_logger::{LOGGER};
 use crate::{
   utils::store::Store,
-  checkout::checkout_manager::{
-    CheckoutManager,
+  session::session_manager::{
+    SessionManager,
     Connect,
     Disconnect,
   },
@@ -36,12 +36,12 @@ pub struct WsActor {
   /// Client must send ping at least once per CLIENT_TIMEOUT,
   /// otherwise we drop connection.
   hb: Instant,
-  checkout_manager: Addr<CheckoutManager>,
+  checkout_manager: Addr<SessionManager>,
   pub ws_session_id: Uuid,
 }
 
 impl WsActor {
-  pub fn new(store: web::Data<Store>, checkout_manager: Addr<CheckoutManager>) -> Self {
+  pub fn new(store: web::Data<Store>, checkout_manager: Addr<SessionManager>) -> Self {
     Self {
       store,
       hb: Instant::now(),

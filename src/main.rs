@@ -9,7 +9,7 @@ use env_logger::Env;
 use ticketland_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
-  checkout::checkout_manager::CheckoutManager,
+  session::session_manager::SessionManager,
 };
 
 #[actix_web::main]
@@ -27,7 +27,7 @@ async fn main() -> std::io::Result<()> {
   tracing_subscriber::fmt::init();
   
   let store = web::Data::new(Store::new().await);
-  let checkout_manager = CheckoutManager::new(Arc::clone(&store)).start();
+  let checkout_manager = SessionManager::new(Arc::clone(&store)).start();
   let port = store.config.port;
   let cors_origin = store.config.cors_origin.clone();
 

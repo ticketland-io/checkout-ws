@@ -4,13 +4,13 @@ use actix::prelude::*;
 use super::ws_actor::WsActor;
 use crate::{
   utils::store::Store,
-  checkout::checkout_manager::CheckoutManager
+  session::session_manager::SessionManager
 };
 
 /// do websocket handshake and start `MyWebSocket` actor
 pub async fn ws_index(
   store: web::Data<Store>,
-  checkout_manager: web::Data<Addr<CheckoutManager>>,
+  checkout_manager: web::Data<Addr<SessionManager>>,
   req: HttpRequest,
   stream: web::Payload
 ) -> Result<HttpResponse, Error> {

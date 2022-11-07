@@ -28,12 +28,12 @@ pub struct Disconnect {
   pub session_id: Uuid,
 }
 
-pub struct CheckoutManager {
+pub struct SessionManager {
   _store: Arc<Store>,
   sessions: HashMap<Uuid, Socket>,
 }
 
-impl CheckoutManager {
+impl SessionManager {
   pub fn new(_store: Arc<Store>) -> Self {
     Self {
       _store,
@@ -49,11 +49,11 @@ impl CheckoutManager {
   }
 }
 
-impl Actor for CheckoutManager {
+impl Actor for SessionManager {
   type Context = Context<Self>;
 }
 
-impl Handler<Connect> for CheckoutManager {
+impl Handler<Connect> for SessionManager {
   type Result = ();
   
   fn handle(&mut self, msg: Connect, _: &mut Self::Context) -> Self::Result {
@@ -69,7 +69,7 @@ impl Handler<Connect> for CheckoutManager {
   }
 }
 
-impl Handler<Disconnect> for CheckoutManager {
+impl Handler<Disconnect> for SessionManager {
   type Result = ();
   
   fn handle(&mut self, msg: Disconnect, _: &mut Self::Context) -> Self::Result {

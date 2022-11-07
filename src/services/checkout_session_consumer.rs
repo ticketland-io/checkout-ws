@@ -9,7 +9,7 @@ use lapin::{
 use amqp_helpers::core::types::Handler;
 use fiat_checkout_manager::models::checkout_session::CheckoutSession;
 use crate::{
-  checkout::checkout_manager::CheckoutManager,
+  session::session_manager::SessionManager,
   ws::types::{
     WsResponse,
     Status,
@@ -18,11 +18,11 @@ use crate::{
 };
 
 pub struct CheckoutSessionHandler {
-  checkout_manager: Arc<CheckoutManager>
+  checkout_manager: Arc<SessionManager>
 }
 
 impl CheckoutSessionHandler {
-  pub async fn new(checkout_manager: Arc<CheckoutManager>) -> Self {
+  pub async fn new(checkout_manager: Arc<SessionManager>) -> Self {
     Self {
       checkout_manager,
     }
