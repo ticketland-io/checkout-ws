@@ -28,7 +28,7 @@ impl Handler<Spawn> for WsActor {
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::CreateCheckoutSession {
+        WsMethod::CreatePrimaryCheckoutSession {
           access_token,
           buyer_uid,
           sale_account,
@@ -40,7 +40,7 @@ impl Handler<Spawn> for WsActor {
           seat_name,
         } => {
           if let Ok(_) = store.auth_guard.authenticate(access_token).await {
-            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout {
+            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Primary {
               ws_session_id,
               buyer_uid: buyer_uid.clone(),
               sale_account: sale_account.clone(),
@@ -50,6 +50,41 @@ impl Handler<Spawn> for WsActor {
               recipient: recipient.clone(),
               seat_index: seat_index.clone(),
               seat_name: seat_name.clone(),
+            }).await;
+            
+            if let Err(error) = result {
+              return  WsResponse {
+                status: Status::Err(error.to_string()),
+                result: None,
+              }
+            }
+
+            WsResponse {
+              status: Status::Ok,
+              result: Some(WsResponseMsg::CheckoutSessionInProgress),
+            }
+          } else {
+            unauthorized()
+          }
+        },
+        WsMethod::CreateSecondaryCheckoutSession {
+          access_token,
+          buyer_uid,
+          sale_account,
+          event_id,
+          ticket_nft,
+          ticket_type_index,
+          recipient,
+        } => {
+          if let Ok(_) = store.auth_guard.authenticate(access_token).await {
+            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Secondary {
+              ws_session_id,
+              buyer_uid: buyer_uid.clone(),
+              sale_account: sale_account.clone(),
+              event_id: event_id.clone(),
+              ticket_nft: ticket_nft.clone(),
+              ticket_type_index: ticket_type_index.clone(),
+              recipient: recipient.clone(),
             }).await;
             
             if let Err(error) = result {

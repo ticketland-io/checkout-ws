@@ -9,7 +9,7 @@ pub struct WsMessage {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum WsMethod {
-  CreateCheckoutSession {
+  CreatePrimaryCheckoutSession {
     buyer_uid: String,
     event_id: String,
     sale_account: String,
@@ -18,6 +18,15 @@ pub enum WsMethod {
     recipient: String,
     seat_index: u32,
     seat_name: String,
+    access_token: String,
+  },
+  CreateSecondaryCheckoutSession {
+    buyer_uid: String,
+    event_id: String,
+    sale_account: String,
+    ticket_nft: String,
+    ticket_type_index: u8,
+    recipient: String,
     access_token: String,
   },
   CheckoutSessionCreated {
