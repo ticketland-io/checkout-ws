@@ -1,2 +1,2 @@
-pub mod checkout_manager_queue;
-pub mod checkout_session_consumer;
+pub mod payment_manager_producer;
+pub mod payment_consumer;

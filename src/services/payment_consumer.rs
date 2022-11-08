@@ -8,7 +8,7 @@ use lapin::{
   message::{Delivery},
 };
 use amqp_helpers::core::types::Handler;
-use fiat_checkout_manager::models::checkout_session::{CheckoutSession, CheckoutSessionId};
+use fiat_checkout_manager::models::payment_intent::{PaymentIntent, PaymentSecret};
 use crate::{
   session::session_manager::{SessionManager, SendMsg},
   ws::types::{
@@ -18,11 +18,11 @@ use crate::{
   }
 };
 
-pub struct CheckoutSessionHandler {
+pub struct PaymentHandler {
   session_manager: Addr<SessionManager>
 }
 
-impl CheckoutSessionHandler {
+impl PaymentHandler {
   pub fn new(session_manager: Addr<SessionManager>) -> Self {
     Self {
       session_manager,
@@ -31,16 +31,16 @@ impl CheckoutSessionHandler {
 }
 
 #[async_trait]
-impl Handler<CheckoutSession> for CheckoutSessionHandler {
-  async fn handle(&self, msg: CheckoutSession, _: &Delivery) -> Result<()> {
-    info!("Receive new checkout session {:?} for {}", &msg.checkout_session_id, &msg.ws_session_id);
+impl Handler<PaymentIntent> for PaymentHandler {
+  async fn handle(&self, msg: PaymentIntent, _: &Delivery) -> Result<()> {
+    info!("Receive new payment {:?} for {}", &msg.payment_secret, &msg.ws_session_id);
 
-    let response = match msg.checkout_session_id {
-      CheckoutSessionId::Ok(checkout_session_id) => WsResponse {
+    let response = match msg.payment_secret {
+      PaymentSecret::Ok(payment_secret) => WsResponse {
         status: Status::Ok,
-        result: Some(WsResponseMsg::CheckoutSessionCreated(checkout_session_id)),
+        result: Some(WsResponseMsg::PaymentIntentCreated(payment_secret)),
       },
-      CheckoutSessionId::Err(error) => WsResponse {
+      PaymentSecret::Err(error) => WsResponse {
         status: Status::Err(error),
         result: None,
       },
