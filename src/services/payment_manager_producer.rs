@@ -25,7 +25,7 @@ impl PaymentManagerProducer {
     }
   }
 
-  pub async fn new_checkout_session(&self, msg: CreatePayment) -> Result<()> {
+  pub async fn new_payment(&self, msg: CreatePayment) -> Result<()> {
     self.producer.publish(
       &"create_payment",
       &"create_payment.new",
