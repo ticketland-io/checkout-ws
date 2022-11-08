@@ -1908,8 +1908,8 @@ checksum = "835a3dc7d1ec9e75e2b5fb4ba75396837112d2060b03f7d43bc1897c7f7211da"
 
 [[package]]
 name = "fiat-checkout-manager"
-version = "0.1.4"
-source = "git+https://github.com/ticketland-io/fiat-checkout-manager#2d34d8427b9039374b55df95c35697cb81bc6c79"
+version = "0.1.7"
+source = "git+https://github.com/ticketland-io/fiat-checkout-manager#7b051aef8bfc9d35cae1fcc97f2a31745c5d0187"
 dependencies = [
  "actix",
  "actix-rt",
@@ -5458,7 +5458,7 @@ dependencies = [
 [[package]]
 name = "ticketland-event-handler"
 version = "0.1.11"
-source = "git+https://github.com/ticketland-io/ticketland-event-handler#10ba7d7b15a61815aefc59e6c8ad66a6b0c56248"
+source = "git+https://github.com/ticketland-io/ticketland-event-handler#132d31055a090f8410e822f3e9ae5feb9be6e705"
 dependencies = [
  "actix",
  "actix-rt",
@@ -5489,7 +5489,7 @@ dependencies = [
 [[package]]
 name = "ticketland-utils"
 version = "0.2.3"
-source = "git+https://github.com/ticketland-io/common-rust#aa6d062e2b413e596e2d1b5d5e4f3f7220d36af3"
+source = "git+https://github.com/ticketland-io/common-rust#eec5ecc0cdb097ec6650f818375a97fffd6524a0"
 dependencies = [
  "lazy_static",
 ]

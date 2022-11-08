@@ -38,7 +38,6 @@ impl Handler<Spawn> for WsActor {
           seat_index,
           seat_name,
         } => {
-          println!("{:?}", access_token);
           if let Ok(user) = store.auth_guard.authenticate(access_token).await {
             let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Primary {
               ws_session_id,
