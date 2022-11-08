@@ -1,4 +1,4 @@
-use std::{sync::Arc, str::FromStr};
+use std::str::FromStr;
 use actix::prelude::*;
 use eyre::Result;
 use tracing::info;
@@ -19,11 +19,11 @@ use crate::{
 };
 
 pub struct CheckoutSessionHandler {
-  session_manager: Arc<Addr<SessionManager>>
+  session_manager: Addr<SessionManager>
 }
 
 impl CheckoutSessionHandler {
-  pub fn new(session_manager: Arc<Addr<SessionManager>>) -> Self {
+  pub fn new(session_manager: Addr<SessionManager>) -> Self {
     Self {
       session_manager,
     }

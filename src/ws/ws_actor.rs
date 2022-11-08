@@ -1,5 +1,4 @@
 use std::{
-  sync::Arc,
   time::{Duration, Instant},
 };
 use actix_web::{web};
@@ -37,12 +36,12 @@ pub struct WsActor {
   /// Client must send ping at least once per CLIENT_TIMEOUT,
   /// otherwise we drop connection.
   hb: Instant,
-  session_manager: Arc<Addr<SessionManager>>,
+  session_manager: Addr<SessionManager>,
   pub ws_session_id: Uuid,
 }
 
 impl WsActor {
-  pub fn new(store: web::Data<Store>, session_manager: Arc<Addr<SessionManager>>) -> Self {
+  pub fn new(store: web::Data<Store>, session_manager: Addr<SessionManager>) -> Self {
     Self {
       store,
       hb: Instant::now(),

@@ -29,11 +29,11 @@ async fn main() -> std::io::Result<()> {
   env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
   
   let store = web::Data::new(Store::new().await);
-  let session_manager = Arc::new(SessionManager::new(Arc::clone(&store)).start());
+  let session_manager = web::Data::new(SessionManager::new(Arc::clone(&store)).start());
   let port = store.config.port;
   let rabbitmq_uri = store.config.rabbitmq_uri.clone();
 
-  let session_manager_clone = Arc::clone(&session_manager);
+  let session_manager_clone = session_manager.get_ref().clone();
   tokio::spawn(async move {
     let mut role_handler_consumer = ConsumerRunner::new(
       rabbitmq_uri,
@@ -57,7 +57,7 @@ async fn main() -> std::io::Result<()> {
 
     App::new()
       .app_data(store.clone())
-      .app_data(web::Data::new(Arc::clone(&session_manager)))
+      .app_data(session_manager.clone())
       .wrap(cors)
       .wrap(middleware::Logger::default())
       .service(web::resource("/ws/").route(web::get().to(ws_index)))
