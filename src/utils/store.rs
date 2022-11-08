@@ -13,7 +13,7 @@ pub struct Store {
   pub config: Config,
   pub neo4j: Arc<Addr<Neo4jActor>>,
   pub auth_guard: Arc<AuthGuard>,
-  pub checkout_manager_queue: PaymentManagerProducer,
+  pub payment_producer: PaymentManagerProducer,
 }
 
 impl Store {
@@ -34,7 +34,7 @@ impl Store {
 
     let auth_guard = Arc::new(AuthGuard::new(config.firebase_auth_key.clone()));
 
-    let checkout_manager_queue = PaymentManagerProducer::new(
+    let payment_producer = PaymentManagerProducer::new(
       config.rabbitmq_uri.clone(),
       config.retry_ttl,
     ).await;
@@ -43,7 +43,7 @@ impl Store {
       config,
       neo4j,
       auth_guard,
-      checkout_manager_queue,
+      payment_producer,
     }
   }
 }
