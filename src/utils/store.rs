@@ -5,7 +5,7 @@ use ticketland_core::{
 };
 use crate::{
   ws::auth::AuthGuard,
-  services::checkout_manager_queue::CheckoutManagerQueue,
+  services::payment_manager_producer::PaymentManagerProducer,
 };
 use super::config::Config;
 
@@ -13,7 +13,7 @@ pub struct Store {
   pub config: Config,
   pub neo4j: Arc<Addr<Neo4jActor>>,
   pub auth_guard: Arc<AuthGuard>,
-  pub checkout_manager_queue: CheckoutManagerQueue,
+  pub checkout_manager_queue: PaymentManagerProducer,
 }
 
 impl Store {
@@ -34,7 +34,7 @@ impl Store {
 
     let auth_guard = Arc::new(AuthGuard::new(config.firebase_auth_key.clone()));
 
-    let checkout_manager_queue = CheckoutManagerQueue::new(
+    let checkout_manager_queue = PaymentManagerProducer::new(
       config.rabbitmq_uri.clone(),
       config.retry_ttl,
     ).await;

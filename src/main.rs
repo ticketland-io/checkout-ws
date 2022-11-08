@@ -11,7 +11,7 @@ use checkout_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
   session::session_manager::SessionManager,
-  services::checkout_session_consumer::CheckoutSessionHandler,
+  services::payment_consumer::PaymentHandler,
 };
 
 #[actix_web::main]
@@ -37,9 +37,9 @@ async fn main() -> std::io::Result<()> {
   tokio::spawn(async move {
     let mut role_handler_consumer = ConsumerRunner::new(
       rabbitmq_uri,
-      "checkout_session_created".to_string(),
-      "checkout_session_created".to_string(),
-      Arc::new(CheckoutSessionHandler::new(session_manager_clone)),
+      "payment_created".to_string(),
+      "payment_created".to_string(),
+      Arc::new(PaymentHandler::new(session_manager_clone)),
     ).await;
 
     role_handler_consumer.start().await.unwrap();

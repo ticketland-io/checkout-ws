@@ -25,7 +25,7 @@ pub enum WsMethod {
     recipient: String,
     access_token: String,
   },
-  CheckoutSessionCreated {
+  PaymentIntentCreated {
     session_id: String,
   }
 }
@@ -43,7 +43,7 @@ pub enum WsResponseMsg {
   Connect,
   Disconnect,
   CheckoutSessionInProgress,
-  CheckoutSessionCreated(String),
+  PaymentIntentCreated(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]

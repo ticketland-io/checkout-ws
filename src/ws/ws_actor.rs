@@ -71,7 +71,7 @@ impl Actor for WsActor {
   fn started(&mut self, ctx: &mut Self::Context) {
     self.start_hb(ctx);
 
-    // connect to the checkout manager
+    // connect to the session manager
     self.session_manager.send(Connect {
       addr: ctx.address().recipient(),
       session_id: self.ws_session_id,

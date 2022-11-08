@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use actix::prelude::*;
-use fiat_checkout_manager::models::create_checkout::CreateCheckout;
+use fiat_checkout_manager::models::create_payment::CreatePayment;
 use super::{
   ws_actor::WsActor,
   types::{
@@ -39,7 +39,7 @@ impl Handler<Spawn> for WsActor {
           seat_name,
         } => {
           if let Ok(user) = store.auth_guard.authenticate(access_token).await {
-            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Primary {
+            let result = store.checkout_manager_queue.new_checkout_session(CreatePayment::Primary {
               ws_session_id,
               buyer_uid: user.local_id.clone(),
               sale_account: sale_account.clone(),
@@ -75,7 +75,7 @@ impl Handler<Spawn> for WsActor {
           recipient,
         } => {
           if let Ok(user) = store.auth_guard.authenticate(access_token).await {
-            let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Secondary {
+            let result = store.checkout_manager_queue.new_checkout_session(CreatePayment::Secondary {
               ws_session_id,
               buyer_uid: user.local_id.clone(),
               sale_account: sale_account.clone(),
