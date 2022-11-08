@@ -6,10 +6,12 @@ use actix_cors::Cors;
 use actix_web::{middleware, web, http, App, HttpResponse, HttpServer};
 use actix::prelude::*;
 use env_logger::Env;
+use amqp_helpers::consumer::consumer_runner::ConsumerRunner;
 use checkout_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
   session::session_manager::SessionManager,
+  services::checkout_session_consumer::CheckoutSessionHandler,
 };
 
 #[actix_web::main]
@@ -27,8 +29,21 @@ async fn main() -> std::io::Result<()> {
   env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
   
   let store = web::Data::new(Store::new().await);
-  let checkout_manager = web::Data::new(SessionManager::new(Arc::clone(&store)).start());
+  let session_manager = Arc::new(SessionManager::new(Arc::clone(&store)).start());
   let port = store.config.port;
+  let rabbitmq_uri = store.config.rabbitmq_uri.clone();
+
+  let session_manager_clone = Arc::clone(&session_manager);
+  tokio::spawn(async move {
+    let mut role_handler_consumer = ConsumerRunner::new(
+      rabbitmq_uri,
+      "checkout_session_created".to_string(),
+      "checkout_session_created".to_string(),
+      Arc::new(CheckoutSessionHandler::new(session_manager_clone)),
+    ).await;
+
+    role_handler_consumer.start().await.unwrap();
+  });
 
   HttpServer::new(move || {
     let cors_origin = store.config.cors_origin.clone();
@@ -42,7 +57,7 @@ async fn main() -> std::io::Result<()> {
 
     App::new()
       .app_data(store.clone())
-      .app_data(checkout_manager.clone()) 
+      .app_data(web::Data::new(Arc::clone(&session_manager)))
       .wrap(cors)
       .wrap(middleware::Logger::default())
       .service(web::resource("/ws/").route(web::get().to(ws_index)))

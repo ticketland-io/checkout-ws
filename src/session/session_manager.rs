@@ -28,6 +28,14 @@ pub struct Disconnect {
   pub session_id: Uuid,
 }
 
+#[derive(Message)]
+#[rtype(result = "()")]
+pub struct SendMsg {
+  pub response: WsResponse,
+  pub session_id: Uuid,
+}
+
+
 pub struct SessionManager {
   _store: Arc<Store>,
   sessions: HashMap<Uuid, Socket>,
@@ -79,5 +87,16 @@ impl Handler<Disconnect> for SessionManager {
       status: Status::Ok,
       result: Some(WsResponseMsg::Disconnect),
     }, &msg.session_id);
+  }
+}
+
+impl Handler<SendMsg> for SessionManager {
+  type Result = ();
+  
+  fn handle(&mut self, msg: SendMsg, _: &mut Self::Context) -> Self::Result {
+    let _ = self.send_message(
+      msg.response,
+      &msg.session_id,
+    );
   }
 }

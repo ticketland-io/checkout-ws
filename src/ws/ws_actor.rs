@@ -1,4 +1,5 @@
 use std::{
+  sync::Arc,
   time::{Duration, Instant},
 };
 use actix_web::{web};
@@ -36,16 +37,16 @@ pub struct WsActor {
   /// Client must send ping at least once per CLIENT_TIMEOUT,
   /// otherwise we drop connection.
   hb: Instant,
-  checkout_manager: Addr<SessionManager>,
+  session_manager: Arc<Addr<SessionManager>>,
   pub ws_session_id: Uuid,
 }
 
 impl WsActor {
-  pub fn new(store: web::Data<Store>, checkout_manager: Addr<SessionManager>) -> Self {
+  pub fn new(store: web::Data<Store>, session_manager: Arc<Addr<SessionManager>>) -> Self {
     Self {
       store,
       hb: Instant::now(),
-      checkout_manager,
+      session_manager,
       ws_session_id: unique_id(),
     }
   }
@@ -72,7 +73,7 @@ impl Actor for WsActor {
     self.start_hb(ctx);
 
     // connect to the checkout manager
-    self.checkout_manager.send(Connect {
+    self.session_manager.send(Connect {
       addr: ctx.address().recipient(),
       session_id: self.ws_session_id,
     })
@@ -90,7 +91,7 @@ impl Actor for WsActor {
   fn stopped(&mut self, _ctx: &mut Self::Context) {
     LOGGER.info("stopped ws connection");
 
-    self.checkout_manager.do_send(Disconnect {
+    self.session_manager.do_send(Disconnect {
       session_id: self.ws_session_id,
     });
   }

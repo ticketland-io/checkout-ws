@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use actix_web::{web, Error, HttpRequest, HttpResponse};
 use actix_web_actors::ws;
 use actix::prelude::*;
@@ -10,10 +11,10 @@ use crate::{
 /// do websocket handshake and start `MyWebSocket` actor
 pub async fn ws_index(
   store: web::Data<Store>,
-  checkout_manager: web::Data<Addr<SessionManager>>,
+  session_manager: web::Data<Arc<Addr<SessionManager>>>,
   req: HttpRequest,
   stream: web::Payload
 ) -> Result<HttpResponse, Error> {
-  let res = ws::start(WsActor::new(store.clone(), checkout_manager.get_ref().clone()), &req, stream);
+  let res = ws::start(WsActor::new(store.clone(), session_manager.get_ref().clone()), &req, stream);
   res
 }

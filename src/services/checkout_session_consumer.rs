@@ -1,4 +1,5 @@
 use std::{sync::Arc, str::FromStr};
+use actix::prelude::*;
 use eyre::Result;
 use tracing::info;
 use async_trait::async_trait;
@@ -9,7 +10,7 @@ use lapin::{
 use amqp_helpers::core::types::Handler;
 use fiat_checkout_manager::models::checkout_session::CheckoutSession;
 use crate::{
-  session::session_manager::SessionManager,
+  session::session_manager::{SessionManager, SendMsg},
   ws::types::{
     WsResponse,
     Status,
@@ -18,13 +19,13 @@ use crate::{
 };
 
 pub struct CheckoutSessionHandler {
-  checkout_manager: Arc<SessionManager>
+  session_manager: Arc<Addr<SessionManager>>
 }
 
 impl CheckoutSessionHandler {
-  pub async fn new(checkout_manager: Arc<SessionManager>) -> Self {
+  pub fn new(session_manager: Arc<Addr<SessionManager>>) -> Self {
     Self {
-      checkout_manager,
+      session_manager,
     }
   }
 }
@@ -39,7 +40,10 @@ impl Handler<CheckoutSession> for CheckoutSessionHandler {
       result: Some(WsResponseMsg::CheckoutSessionCreated(msg.checkout_session_id)),
     };
 
-    self.checkout_manager.send_message(response, &Uuid::from_str(&msg.ws_session_id)?)?;
+    self.session_manager.do_send(SendMsg {
+      response,
+      session_id: Uuid::from_str(&msg.ws_session_id)?,
+    });
 
     Ok(())
   }
