@@ -24,22 +24,23 @@ async fn main() -> std::io::Result<()> {
     dotenv::from_filename(".env").expect("cannot load env from a file");
   }
 
-  tracing_subscriber::fmt::init();
+  env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
   
   let store = web::Data::new(Store::new().await);
   let checkout_manager = SessionManager::new(Arc::clone(&store)).start();
   let port = store.config.port;
-  let cors_origin = store.config.cors_origin.clone();
-
-  env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
   HttpServer::new(move || {
+    let cors_origin = store.config.cors_origin.clone();
+
     let cors = Cors::default()
-      .allowed_origin(&cors_origin)
-      .allowed_methods(vec!["GET", "POST"])
-      .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
-      .allowed_header(http::header::CONTENT_TYPE)
-      .max_age(3600);
+    .allowed_origin_fn(move |origin, _| {
+      cors_origin.iter().any(|v| v == origin || v == "*")
+    })
+    .allowed_methods(vec!["GET", "POST"])
+    .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+    .allowed_header(http::header::CONTENT_TYPE)
+    .max_age(3600);
 
     App::new()
       .app_data(store.clone())
