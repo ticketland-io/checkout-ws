@@ -7,7 +7,7 @@ pub struct WsMessage {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum WsMethod {
-  CreatePrimaryCheckoutSession {
+  CreatePrimaryPayment {
     event_id: String,
     sale_account: String,
     ticket_nft: String,
@@ -17,7 +17,7 @@ pub enum WsMethod {
     seat_name: String,
     access_token: String,
   },
-  CreateSecondaryCheckoutSession {
+  CreateSecondaryPayment {
     event_id: String,
     sale_account: String,
     ticket_nft: String,

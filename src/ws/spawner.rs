@@ -28,7 +28,7 @@ impl Handler<Spawn> for WsActor {
 
     let fut = async move {
       match &msg.0.method {
-        WsMethod::CreatePrimaryCheckoutSession {
+        WsMethod::CreatePrimaryPayment {
           access_token,
           sale_account,
           event_id,
@@ -66,7 +66,7 @@ impl Handler<Spawn> for WsActor {
             unauthorized()
           }
         },
-        WsMethod::CreateSecondaryCheckoutSession {
+        WsMethod::CreateSecondaryPayment {
           access_token,
           sale_account,
           event_id,
