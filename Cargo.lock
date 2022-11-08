@@ -1172,6 +1172,35 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "checkout-ws"
+version = "0.1.0"
+dependencies = [
+ "actix",
+ "actix-cors",
+ "actix-rt",
+ "actix-web",
+ "actix-web-actors",
+ "amqp-helpers",
+ "api-helpers",
+ "async-trait",
+ "borsh",
+ "common-data",
+ "dotenv",
+ "env_logger",
+ "eyre",
+ "fiat-checkout-manager",
+ "lapin",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "ticketland-core",
+ "ticketland-utils",
+ "tracing",
+ "tracing-subscriber",
+ "uuid 1.2.1",
+]
+
+[[package]]
 name = "chrono"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5462,35 +5491,6 @@ version = "0.2.3"
 source = "git+https://github.com/ticketland-io/common-rust#aa6d062e2b413e596e2d1b5d5e4f3f7220d36af3"
 dependencies = [
  "lazy_static",
-]
-
-[[package]]
-name = "ticketland-ws"
-version = "0.1.0"
-dependencies = [
- "actix",
- "actix-cors",
- "actix-rt",
- "actix-web",
- "actix-web-actors",
- "amqp-helpers",
- "api-helpers",
- "async-trait",
- "borsh",
- "common-data",
- "dotenv",
- "env_logger",
- "eyre",
- "fiat-checkout-manager",
- "lapin",
- "serde",
- "serde_json",
- "thiserror",
- "ticketland-core",
- "ticketland-utils",
- "tracing",
- "tracing-subscriber",
- "uuid 1.2.1",
 ]
 
 [[package]]

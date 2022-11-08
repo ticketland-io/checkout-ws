@@ -6,7 +6,7 @@ use actix_cors::Cors;
 use actix_web::{middleware, web, http, App, HttpResponse, HttpServer};
 use actix::prelude::*;
 use env_logger::Env;
-use ticketland_ws::{
+use checkout_ws::{
   utils::store::Store,
   ws::entrypoint::ws_index,
   session::session_manager::SessionManager,
@@ -27,16 +27,14 @@ async fn main() -> std::io::Result<()> {
   env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
   
   let store = web::Data::new(Store::new().await);
-  let checkout_manager = SessionManager::new(Arc::clone(&store)).start();
+  let checkout_manager = web::Data::new(SessionManager::new(Arc::clone(&store)).start());
   let port = store.config.port;
 
   HttpServer::new(move || {
     let cors_origin = store.config.cors_origin.clone();
 
     let cors = Cors::default()
-    .allowed_origin_fn(move |origin, _| {
-      cors_origin.iter().any(|v| v == origin || v == "*")
-    })
+    .allowed_origin_fn(move |origin, _| cors_origin.iter().any(|v| v == origin || v == "*"))
     .allowed_methods(vec!["GET", "POST"])
     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
     .allowed_header(http::header::CONTENT_TYPE)

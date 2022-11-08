@@ -107,11 +107,9 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsActor {
         self.hb = Instant::now();
       },
       Ok(ws::Message::Text(text)) => {
-        if let Ok(_) = serde_json::from_slice::<WsMessage>(text.as_bytes()) {
-          if let Ok(msg) = serde_json::from_slice::<WsMessage>(text.as_bytes()) {
-            ctx.notify(Spawn(msg));
-          }  
-        }
+        if let Ok(msg) = serde_json::from_slice::<WsMessage>(text.as_bytes()) {
+          ctx.notify(Spawn(msg));
+        } 
       },
       Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
       Ok(ws::Message::Close(reason)) => {

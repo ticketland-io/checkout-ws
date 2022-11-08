@@ -30,7 +30,6 @@ impl Handler<Spawn> for WsActor {
       match &msg.0.method {
         WsMethod::CreatePrimaryCheckoutSession {
           access_token,
-          buyer_uid,
           sale_account,
           event_id,
           ticket_nft,
@@ -39,10 +38,11 @@ impl Handler<Spawn> for WsActor {
           seat_index,
           seat_name,
         } => {
-          if let Ok(_) = store.auth_guard.authenticate(access_token).await {
+          println!("{:?}", access_token);
+          if let Ok(user) = store.auth_guard.authenticate(access_token).await {
             let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Primary {
               ws_session_id,
-              buyer_uid: buyer_uid.clone(),
+              buyer_uid: user.local_id.clone(),
               sale_account: sale_account.clone(),
               event_id: event_id.clone(),
               ticket_nft: ticket_nft.clone(),
@@ -69,17 +69,16 @@ impl Handler<Spawn> for WsActor {
         },
         WsMethod::CreateSecondaryCheckoutSession {
           access_token,
-          buyer_uid,
           sale_account,
           event_id,
           ticket_nft,
           ticket_type_index,
           recipient,
         } => {
-          if let Ok(_) = store.auth_guard.authenticate(access_token).await {
+          if let Ok(user) = store.auth_guard.authenticate(access_token).await {
             let result = store.checkout_manager_queue.new_checkout_session(CreateCheckout::Secondary {
               ws_session_id,
-              buyer_uid: buyer_uid.clone(),
+              buyer_uid: user.local_id.clone(),
               sale_account: sale_account.clone(),
               event_id: event_id.clone(),
               ticket_nft: ticket_nft.clone(),
