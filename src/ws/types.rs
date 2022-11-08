@@ -31,12 +31,14 @@ pub enum WsMethod {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Status {
   Ok,
   Err(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum WsResponseMsg {
   Connect,
   Disconnect,
@@ -45,6 +47,7 @@ pub enum WsResponseMsg {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub struct WsResponse {
   pub status: Status,
   pub result: Option<WsResponseMsg>,
