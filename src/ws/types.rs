@@ -10,11 +10,8 @@ pub enum WsMethod {
   CreatePrimaryPayment {
     event_id: String,
     sale_account: String,
-    ticket_nft: String,
     ticket_type_index: u8,
     recipient: String,
-    seat_index: u32,
-    seat_name: String,
     access_token: String,
   },
   CreateSecondaryPayment {

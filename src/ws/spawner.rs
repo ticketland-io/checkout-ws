@@ -32,11 +32,8 @@ impl Handler<Spawn> for WsActor {
           access_token,
           sale_account,
           event_id,
-          ticket_nft,
           ticket_type_index,
           recipient,
-          seat_index,
-          seat_name,
         } => {
           if let Ok(user) = store.auth_guard.authenticate(access_token).await {
             let result = store.payment_producer.new_payment(CreatePayment::Primary {
@@ -44,13 +41,10 @@ impl Handler<Spawn> for WsActor {
               buyer_uid: user.local_id.clone(),
               sale_account: sale_account.clone(),
               event_id: event_id.clone(),
-              ticket_nft: ticket_nft.clone(),
               ticket_type_index: ticket_type_index.clone(),
               recipient: recipient.clone(),
-              seat_index: seat_index.clone(),
-              seat_name: seat_name.clone(),
             }).await;
-            
+
             if let Err(error) = result {
               return  WsResponse {
                 status: Status::Err(error.to_string()),
