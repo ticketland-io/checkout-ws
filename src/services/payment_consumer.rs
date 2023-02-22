@@ -32,7 +32,7 @@ impl PaymentHandler {
 
 #[async_trait]
 impl Handler<PaymentIntent> for PaymentHandler {
-  async fn handle(&self, msg: PaymentIntent, _: &Delivery) -> Result<()> {
+  async fn handle(&self, msg: PaymentIntent, _: &Delivery, _: i64,) -> Result<()> {
     info!("Receive new payment {:?} for {}", &msg.payment_secret, &msg.ws_session_id);
 
     let response = match msg.payment_secret {
