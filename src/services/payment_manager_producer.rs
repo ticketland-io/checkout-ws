@@ -10,7 +10,7 @@ pub struct PaymentManagerProducer {
 impl PaymentManagerProducer {
   pub async fn new(
     rabbitmq_uri: String,
-    retry_ttl: u16,
+    retry_ttl: u32,
   ) -> Self {
     let producer = RetryProducer::new(
       &rabbitmq_uri,
@@ -18,6 +18,7 @@ impl PaymentManagerProducer {
       &"create_payment",
       &"create_payment.new",
       retry_ttl,
+      None,
     ).await.unwrap();
 
     Self {
@@ -29,7 +30,8 @@ impl PaymentManagerProducer {
     self.producer.publish(
       &"create_payment",
       &"create_payment.new",
-      &msg.try_to_vec().unwrap()
+      &msg.try_to_vec().unwrap(),
+      true,
     ).await
   }
 }

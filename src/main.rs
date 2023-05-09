@@ -35,12 +35,13 @@ async fn main() -> std::io::Result<()> {
 
   let session_manager_clone = session_manager.get_ref().clone();
   tokio::spawn(async move {
-    let mut role_handler_consumer = ConsumerRunner::new(
+    let role_handler_consumer = ConsumerRunner::new(
       rabbitmq_uri,
       "payment_created".to_string(),
       "payment_created".to_string(),
-      Arc::new(PaymentHandler::new(session_manager_clone)),
-    ).await;
+      1,
+      PaymentHandler::new(session_manager_clone),
+    ).await.unwrap();
 
     role_handler_consumer.start().await.unwrap();
   });

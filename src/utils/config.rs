@@ -5,7 +5,7 @@ pub struct Config {
   pub firebase_auth_key: String,
   pub cors_origin: Vec<String>,
   pub rabbitmq_uri: String,
-  pub retry_ttl: u16,
+  pub retry_ttl: u32,
 }
 
 impl Config {
@@ -16,7 +16,7 @@ impl Config {
         firebase_auth_key: env::var("FIREBASE_API_KEY").unwrap(),
         cors_origin: env::var("CORS_ORIGIN").unwrap().split(",").map(|val| val.to_owned()).collect(),
         rabbitmq_uri: env::var("RABBITMQ_URI").unwrap(),
-        retry_ttl: env::var("RETRY_TTL").unwrap().parse::<u16>().unwrap(),
+        retry_ttl: env::var("RETRY_TTL").unwrap().parse::<u32>().unwrap(),
       }
     )
   }
