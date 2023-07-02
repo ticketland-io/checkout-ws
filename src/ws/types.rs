@@ -9,15 +9,12 @@ pub struct WsMessage {
 pub enum WsMethod {
   CreatePrimaryPayment {
     event_id: String,
-    sale_account: String,
     ticket_type_index: u8,
     recipient: String,
     access_token: String,
   },
   CreateSecondaryPayment {
     event_id: String,
-    sale_account: String,
-    ticket_nft: String,
     ticket_type_index: u8,
     recipient: String,
     access_token: String,

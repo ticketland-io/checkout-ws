@@ -30,7 +30,6 @@ impl Handler<Spawn> for WsActor {
       match &msg.0.method {
         WsMethod::CreatePrimaryPayment {
           access_token,
-          sale_account,
           event_id,
           ticket_type_index,
           recipient,
@@ -39,7 +38,6 @@ impl Handler<Spawn> for WsActor {
             let result = store.payment_producer.new_payment(CreatePayment::Primary {
               ws_session_id,
               buyer_uid: user.local_id.clone(),
-              sale_account: sale_account.clone(),
               event_id: event_id.clone(),
               ticket_type_index: ticket_type_index.clone(),
               recipient: recipient.clone(),
@@ -62,9 +60,7 @@ impl Handler<Spawn> for WsActor {
         },
         WsMethod::CreateSecondaryPayment {
           access_token,
-          sale_account,
           event_id,
-          ticket_nft,
           ticket_type_index,
           recipient,
         } => {
@@ -72,9 +68,7 @@ impl Handler<Spawn> for WsActor {
             let result = store.payment_producer.new_payment(CreatePayment::Secondary {
               ws_session_id,
               buyer_uid: user.local_id.clone(),
-              sale_account: sale_account.clone(),
               event_id: event_id.clone(),
-              ticket_nft: ticket_nft.clone(),
               ticket_type_index: ticket_type_index.clone(),
               recipient: recipient.clone(),
             }).await;
