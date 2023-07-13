@@ -63,6 +63,9 @@ impl Handler<Spawn> for WsActor {
           event_id,
           ticket_type_index,
           recipient,
+          seat_index,
+          cnt_sui_address,
+          listing_sui_address,
         } => {
           if let Ok(user) = store.auth_guard.authenticate(access_token).await {
             let result = store.payment_producer.new_payment(CreatePayment::Secondary {
@@ -71,8 +74,11 @@ impl Handler<Spawn> for WsActor {
               event_id: event_id.clone(),
               ticket_type_index: ticket_type_index.clone(),
               recipient: recipient.clone(),
+              seat_index: seat_index.clone(),
+              cnt_sui_address: cnt_sui_address.clone(),
+              listing_sui_address: listing_sui_address.clone(),
             }).await;
-            
+
             if let Err(error) = result {
               return  WsResponse {
                 status: Status::Err(error.to_string()),

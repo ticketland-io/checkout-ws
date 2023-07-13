@@ -18,6 +18,9 @@ pub enum WsMethod {
     ticket_type_index: u8,
     recipient: String,
     access_token: String,
+    seat_index: u32,
+    cnt_sui_address: String,
+    listing_sui_address: String,
   },
   PaymentIntentCreated {
     session_id: String,
