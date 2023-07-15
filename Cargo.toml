@@ -1,6 +1,6 @@
 [package]
 name = "checkout-ws"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "BUSL-1.1"
 
@@ -15,14 +15,11 @@ actix-web-actors = "4.1.0"
 async-trait = "0.1.56"
 borsh = "0.9.3"
 eyre = "0.6.8"
-# ticketland-core = { git = "https://github.com/ticketland-io/common-rust", version = "0.2.19" }
-ticketland-core = { path = "../common-rust/src/ticketland-core" }
+ticketland-core = { git = "https://github.com/ticketland-io/common-rust", version = "0.3.0" }
 amqp-helpers = { git = "https://github.com/ticketland-io/amqp-helpers", version = "0.4.3" }
-# api-helpers = { git = "https://github.com/ticketland-io/common-rust", version = "0.3.26" }
-api-helpers = { path = "../common-rust/src/api-helpers" }
+api-helpers = { git = "https://github.com/ticketland-io/common-rust", version = "0.4.0" }
 ticketland-utils = { git = "https://github.com/ticketland-io/common-rust", version = "0.2.3" }
-# fiat-checkout-manager = { git = "https://github.com/ticketland-io/fiat-checkout-manager", branch="fix/remove-on-behalf-of",  version ="0.1.13" }
-fiat-checkout-manager = {path = '../fiat-checkout-manager'}
+fiat-checkout-manager = { git = "https://github.com/ticketland-io/fiat-checkout-manager", version ="0.2.0" }
 env_logger = "0.9.0"
 dotenv = "0.15"
 uuid = { version = "1.1.2", features = ["v4"] }
